@@ -32,7 +32,7 @@ public class InputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     
     private void Initialize()
     {
-        _playerActionMap = new  InputSystem_Actions();
+        _playerActionMap = new InputSystem_Actions();
         _playerActionMap.Player.Enable();
         Runner.AddCallbacks(this);
         done = true;
