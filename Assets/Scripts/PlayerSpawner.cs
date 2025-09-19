@@ -1,5 +1,5 @@
-using UnityEngine;
 using Fusion;
+using UnityEngine;
 
 public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
 {
@@ -7,10 +7,10 @@ public class PlayerSpawner : SimulationBehaviour, IPlayerJoined
 
     public void PlayerJoined(PlayerRef player)
     {
-        if (player == Runner.LocalPlayer)
+        //Runner es el Network Manager
+        if(player == Runner.LocalPlayer)
         {
-            Runner.Spawn(playerPrefab, new Vector3(0,1,0), Quaternion.identity, player);
+            Runner.Spawn(playerPrefab, Vector3.up, Quaternion.identity,player);
         }
     }
-
 }

@@ -1,45 +1,58 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
-    private InputSystem_Actions _playerActionMap;
+    private InputSystem_Actions playerActionMap;
     private bool done;
 
     private void Start()
     {
-        if(Runner!= null)
+        if (Runner != null)
         {
-            Initialize();
+            Initialized();
         }
     }
 
     private void Update()
     {
-        if (!done && Runner != null)
+        if (done == false && Runner != null)
         {
-            Initialize();
+
         }
     }
-
     private void OnDisable()
     {
         Runner.RemoveCallbacks(this);
     }
-    
-    private void Initialize()
+
+    private void Initialized()
     {
-        _playerActionMap = new InputSystem_Actions();
-        _playerActionMap.Player.Enable();
+        playerActionMap = new InputSystem_Actions();
+        playerActionMap.Player.Enable();
         Runner.AddCallbacks(this);
         done = true;
     }
+    public void OnInput(NetworkRunner runner, NetworkInput input)
+    {
+        var myInput = new MyInput();
+        var playerActions = playerActionMap.Player;
 
-    #region MyRegion NetworkRunnerBS
-    
+        myInput.buttons.Set(MyButtons.Forward, playerActions.Move.ReadValue<Vector2>().y > 0);
+        myInput.buttons.Set(MyButtons.Backward, playerActions.Move.ReadValue<Vector2>().y < 0);
+        myInput.buttons.Set(MyButtons.Left, playerActions.Move.ReadValue<Vector2>().x < 0);
+        myInput.buttons.Set(MyButtons.Right, playerActions.Move.ReadValue<Vector2>().x > 0);
+
+        input.Set(myInput);
+
+    }
+
+    //----------------------IGNORE ALL THIS BS-----------------------------------
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
         throw new NotImplementedException();
@@ -94,6 +107,7 @@ public class InputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     {
         throw new NotImplementedException();
     }
+
     
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
@@ -130,26 +144,12 @@ public class InputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     {
         throw new NotImplementedException();
     }
-    
-    #endregion
-    public void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-        var MyInput = new MyInput();
-        var playerActions = _playerActionMap.Player;
-
-        MyInput.buttons.Set(MyButtons.Forward, playerActions.Move.ReadValue<Vector2>().y > 0);
-        MyInput.buttons.Set(MyButtons.Backward, playerActions.Move.ReadValue<Vector2>().y < 0);
-        MyInput.buttons.Set(MyButtons.Left, playerActions.Move.ReadValue<Vector2>().y < 0);
-        MyInput.buttons.Set(MyButtons.Right, playerActions.Move.ReadValue<Vector2>().y > 0);
-        
-        input.Set(MyInput);
-    }
 }
 
 public struct MyInput : INetworkInput
 {
     public NetworkButtons buttons;
-    public Vector3 aimdirections;
+    public Vector3 aimDirection;
 }
 
 enum MyButtons

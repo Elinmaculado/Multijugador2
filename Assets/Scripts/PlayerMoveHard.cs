@@ -1,8 +1,5 @@
-using System;
-using System.Numerics;
 using UnityEngine;
 using Fusion;
-using Vector3 = UnityEngine.Vector3;
 
 public class PlayerMoveHard : NetworkBehaviour
 {
@@ -16,21 +13,13 @@ public class PlayerMoveHard : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (GetInput<MyInput>(out var inputs) == false)
-            return;
-        
+        if ( GetInput<MyInput>(out var inputs) == false) { return; }
 
         var vector = new Vector3();
-        if (inputs.buttons.IsSet(MyButtons.Forward))
-            vector.z += 1;
-        if (inputs.buttons.IsSet(MyButtons.Backward))
-            vector.z -= 1;
-        if (inputs.buttons.IsSet(MyButtons.Left))
-            vector.x -= 1;
-        if (inputs.buttons.IsSet(MyButtons.Right))
-            vector.x += 1;
-        
-        controller.Move(vector);
-        
+
+        if( inputs.buttons.IsSet(MyButtons.Forward)) { vector.z += 1; }
+        if (inputs.buttons.IsSet(MyButtons.Backward)) { vector.z -= 1; }
+        if (inputs.buttons.IsSet(MyButtons.Left)) { vector.x += 1; }
+        if (inputs.buttons.IsSet(MyButtons.Right)) { vector.x -= 1; }
     }
 }
